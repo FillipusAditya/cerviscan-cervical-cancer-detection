@@ -147,9 +147,9 @@ def otomatis(csv_file, output_path):
 
 def main():
     # csv_file = "../datasets/dataset_g/cropped_image_after_iva_reference_4/features/segmented/LAB_LBP_GLRLM_TAMURA.csv"
-    csv_file = "../datasets/dataset_d/features/LAB_LBP_GLRLM_TAMURA.csv"
+    csv_file = "../datasets/dataset_f_puskesmas/features/LAB_LBP_GLRLM_TAMURA.csv"
     # output_path = "../datasets/dataset_g/cropped_image_after_iva_reference_4/classification_result/segmented/lab_lbp_glrlm_tamura"
-    output_path = "../datasets/dataset_d/classification_result/clean_lab_lbp_glrlm_tamura"
+    output_path = "../datasets/dataset_f_puskesmas/classification_result/001_run/xgboost_rfecv/clean_lab_lbp_glrlm_tamura"
     otomatis(csv_file, output_path)
 
 if __name__ == "__main__":

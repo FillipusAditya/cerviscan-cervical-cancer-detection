@@ -1,0 +1,2 @@
+max_depth,min_samples_split,min_samples_leaf,n_estimators,learning_rate
+6,13,18,75,0.1830843590302062

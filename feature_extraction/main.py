@@ -141,8 +141,8 @@ class ExtractFeatures:
 
 if __name__ == "__main__":
     # Example usage for batch feature extraction
-    root_dir = '../datasets/dataset_d/004_resized_512_segmented_multiotsu_images'
-    output_dir = '../datasets/dataset_d/features'
+    root_dir = '../datasets/dataset_puskesmas/segmented'
+    output_dir = '../datasets/dataset_puskesmas/features'
 
     extractor = ExtractFeatures(root_dir, output_dir)
     extractor.extract_features()
