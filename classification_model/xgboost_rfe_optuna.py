@@ -15,23 +15,27 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 def split_data(csv_file_path, output_save, remove_ids=None):
+    print("[INFO] Membaca dataset...")
     csv_file = pd.read_csv(csv_file_path)
 
     if remove_ids is not None and 'image_id' in csv_file.columns:
+        print(f"[INFO] Menghapus {len(remove_ids)} data berdasarkan image_id...")
         csv_file = csv_file[~csv_file['image_id'].isin(remove_ids)]
 
     if 'label' not in csv_file.columns:
-        raise ValueError(f"Column 'label' not found in file {csv_file_path}")
+        raise ValueError(f"Column 'label' tidak ditemukan di file {csv_file_path}")
     if 'image_id' in csv_file.columns:
         csv_file.drop(columns=['image_id'], inplace=True)
 
     x_source = csv_file.drop('label', axis=1)
     y_source = csv_file['label'].replace({'abnormal': 1, 'normal': 0})
 
+    print("[INFO] Split data train-test...")
     x_train, x_test, y_train, y_test = train_test_split(
         x_source, y_source, test_size=0.2, random_state=123)
 
-    estimator = xgb.XGBClassifier()
+    print("[INFO] Melakukan Feature Selection dengan RFECV...")
+    estimator = xgb.XGBClassifier(use_label_encoder=False, eval_metric="logloss", verbosity=0)
     visualizer = RFECV(estimator=estimator, step=1, cv=5, scoring='accuracy')
     visualizer.fit(x_train, y_train)
     visualizer.show(outpath=os.path.join(output_save, "rfecv_visualization.png"))
@@ -40,6 +44,8 @@ def split_data(csv_file_path, output_save, remove_ids=None):
     mask = visualizer.support_
     x_train = x_train.loc[:, mask]
     x_test = x_test.loc[:, mask]
+
+    print(f"[INFO] Jumlah fitur terpilih: {x_train.shape[1]}")
 
     df_train = pd.concat([x_train, y_train], axis=1)
     df_test = pd.concat([x_test, y_test], axis=1)
@@ -54,7 +60,7 @@ def objective(trial, x_train, y_train):
         "objective": "binary:logistic",
         "eval_metric": "logloss",
         "use_label_encoder": False,
-        "verbosity": 0,
+        "verbosity": 0,  # supaya output dari cross_val_score tidak terlalu bising
         "n_estimators": trial.suggest_int("n_estimators", 100, 1000),
         "max_depth": trial.suggest_int("max_depth", 3, 12),
         "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.3, log=True),
@@ -71,13 +77,24 @@ def objective(trial, x_train, y_train):
     return scores.mean()
 
 def get_best_model(x_train, y_train, output_save, n_trials=50):
+    print(f"[INFO] Memulai Hyperparameter Tuning dengan Optuna ({n_trials} trials)...")
     study = optuna.create_study(direction="maximize")
     study.optimize(lambda trial: objective(trial, x_train, y_train), n_trials=n_trials)
 
-    print("Best Trial:", study.best_trial.params)
+    print("[INFO] Hyperparameter terbaik ditemukan!")
+    print(study.best_trial.params)
 
-    best_model = xgb.XGBClassifier(**study.best_trial.params)
-    best_model.fit(x_train, y_train)
+    best_params = study.best_trial.params
+    best_params.update({
+        "objective": "binary:logistic",
+        "eval_metric": "logloss",
+        "use_label_encoder": False,
+        "verbosity": 1  # tampilkan progres training
+    })
+
+    best_model = xgb.XGBClassifier(**best_params)
+    print("[INFO] Melatih model terbaik dengan data training...")
+    best_model.fit(x_train, y_train, verbose=True)
 
     pickle.dump(best_model, open(os.path.join(output_save, 'xgb_best.pkl'), 'wb'))
     pd.DataFrame([study.best_trial.params]).to_csv(
@@ -87,6 +104,7 @@ def get_best_model(x_train, y_train, output_save, n_trials=50):
     return best_model
 
 def get_final_data(best_model, x_train, y_train, x_test, y_test, output_save):
+    print("[INFO] Evaluasi model...")
     y_predict = best_model.predict(x_test)
     y_proba = best_model.predict_proba(x_test)[:, 1]
 
@@ -100,6 +118,8 @@ def get_final_data(best_model, x_train, y_train, x_test, y_test, output_save):
 
     roc_auc = roc_auc_score(y_test, y_proba)
     pr_auc = average_precision_score(y_test, y_proba)
+
+    print(f"[INFO] Accuracy: {accuracy:.4f}, F1: {f1:.4f}, ROC-AUC: {roc_auc:.4f}, PR-AUC: {pr_auc:.4f}")
 
     df_performance = pd.DataFrame({
         'Metric': ['Accuracy', 'Precision', 'Specificity', 'Recall', 'F1 Score', 'ROC-AUC', 'PR-AUC'],
@@ -129,7 +149,7 @@ def get_final_data(best_model, x_train, y_train, x_test, y_test, output_save):
                     ha='center', va='center',
                     xytext=(0, 9), textcoords='offset points')
 
-    # 🔹 ROC Curve & PR Curve
+    # 🔹 ROC Curve
     fpr, tpr, _ = roc_curve(y_test, y_proba)
     prec, rec, _ = precision_recall_curve(y_test, y_proba)
 
@@ -159,9 +179,11 @@ def otomatis(csv_file, output_path):
         "ACE1", "ACF1", "ADE1", "ADH1", "ADY1", "AEM1", "API1", "AGO1",
         "AOP1", "AIO1", "AHS1", "AFA1", "AEB1", "ADC1", "ADA1"
     ]
+    print("[INFO] Memulai pipeline otomatis...")
     x_train, x_test, y_train, y_test = split_data(csv_file, output_path, remove_ids=remove_ids)
     best_model = get_best_model(x_train, y_train, output_path, n_trials=50)
     get_final_data(best_model, x_train, y_train, x_test, y_test, output_path)
+    print("[INFO] Proses selesai! Semua hasil disimpan di:", output_path)
 
 def main():
     csv_file = "../datasets/dataset_f/features/LAB_LBP_GLRLM_TAMURA.csv"
