@@ -1,0 +1,8 @@
+Dataset,Accuracy
+Train Accuracy,0.9689922480620154
+Test Accuracy,0.7878787878787878
+Accuracy,0.7878787878787878
+Precision,0.8
+Specificity,0.8235294117647058
+Recall,0.75
+F1 Score,0.7741935483870969

@@ -1,0 +1,11 @@
+Feature,Importance
+SRE_deg45,0.15419911
+mean_a,0.11602403
+mean_b,0.11370038
+LRE_deg90,0.11022521
+skew_l,0.105596446
+SRHGLE_deg0,0.102294944
+LRHGLE_deg45,0.0994741
+std_l,0.07081577
+std_a,0.069957756
+coarseness_tamura,0.057712298

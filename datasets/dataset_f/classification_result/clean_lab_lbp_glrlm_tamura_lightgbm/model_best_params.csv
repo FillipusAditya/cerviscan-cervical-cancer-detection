@@ -1,0 +1,2 @@
+boosting_type,class_weight,colsample_bytree,importance_type,learning_rate,max_depth,min_child_samples,min_child_weight,min_split_gain,n_estimators,n_jobs,num_leaves,objective,random_state,reg_alpha,reg_lambda,subsample,subsample_for_bin,subsample_freq
+gbdt,,0.8,split,0.01,3,10,0.001,0.0,50,,15,,123,0.0,0.0,0.6,200000,0

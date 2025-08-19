@@ -1,0 +1,2 @@
+algorithm,estimator__ccp_alpha,estimator__class_weight,estimator__criterion,estimator__max_depth,estimator__max_features,estimator__max_leaf_nodes,estimator__min_impurity_decrease,estimator__min_samples_leaf,estimator__min_samples_split,estimator__min_weight_fraction_leaf,estimator__monotonic_cst,estimator__random_state,estimator__splitter,estimator,learning_rate,n_estimators,random_state
+deprecated,0.0,,gini,5,,,0.0,1,2,0.0,,,best,DecisionTreeClassifier(max_depth=5),1.61,250,
