@@ -22,13 +22,13 @@ def bitwiseSegmentation():
         - Each segmented image is saved with the same filename as the original.
     """
     # Path to the root directory containing cropped input images
-    root_dir = '../datasets/base_dataset_iarc_cropped/001_cropped'
+    root_dir = '../datasets/dataset_g/cropped_image_after_iva_reference_4/seperated'
     
     # Path to the directory containing mask images
-    mask_dir = '../datasets/dataset_j/002_mask_images'
+    mask_dir = '../datasets/dataset_g/cropped_image_after_iva_reference_4/equalized_mask'
     
     # Path to the output directory where segmented images will be saved
-    output_dir = '../datasets/dataset_j/003_segmented_multiotsu_images'
+    output_dir = '../datasets/dataset_g/cropped_image_after_iva_reference_4/equalized_segmented'
     
     # Get a list of subdirectories (each representing a label/class)
     sub_img_dirs = glob.glob(os.path.join(root_dir, '*'))
