@@ -186,8 +186,8 @@ def otomatis(csv_file, output_path):
     print("[INFO] Proses selesai! Semua hasil disimpan di:", output_path)
 
 def main():
-    csv_file = "../datasets/dataset_f/features/LAB_LBP_GLRLM_TAMURA.csv"
-    output_path = "../datasets/dataset_f/classification_result/clean_lab_lbp_glrlm_tamura_optuna"
+    csv_file = "../datasets/dataset_f/features/RGB_LBP_GLRLM_TAMURA.csv"
+    output_path = "../datasets/dataset_f/classification_result/clean_RGB_lbp_glrlm_tamura_optuna"
     otomatis(csv_file, output_path)
 
 if __name__ == "__main__":
