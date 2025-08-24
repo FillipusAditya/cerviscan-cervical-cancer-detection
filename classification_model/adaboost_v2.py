@@ -52,11 +52,11 @@ def get_best_model(cv, verbose, n_jobs, random_grid, x_train, y_train, output_sa
     ada_model = AdaBoostClassifier()
     ada_grid_search = GridSearchCV(
         ada_model, random_grid, cv=cv, verbose=verbose,
-        n_jobs=n_jobs, scoring='accuracy'
+        n_jobs=n_jobs, scoring='recall'
     )
     ada_grid_search.fit(x_train, y_train)
     best_model = ada_grid_search.best_estimator_
-    pickle.dump(best_model, open(os.path.join(output_save, 'adaboost_best'), 'wb'))
+    pickle.dump(best_model, open(os.path.join(output_save, 'adaboost_best.pkl'), 'wb'))
     return best_model
 
 def get_final_data(best_model, x_train, y_train, x_test, y_test, y_predict, output_save):
@@ -136,9 +136,9 @@ def otomatis(csv_file, output_path):
 
 def main():
     # csv_file = "../datasets/dataset_g/cropped_image_after_iva_reference_1/features/segmented/LAB_LBP_GLRLM_TAMURA.csv"
-    csv_file = "../datasets/dataset_d/features/YUV_LBP_GLRLM_TAMURA.csv"
+    csv_file = "../datasets/dataset_f_puskesmas/features/special.csv"
     # output_path = "../datasets/dataset_g/cropped_image_after_iva_reference_1/classification_result/segmented/lab_lbp_glrlm_tamura_adaboost_norfecv"
-    output_path = "../datasets/dataset_d/classification_result/clean_yuv_lbp_glrlm_tamura_adaboost_norfecv"
+    output_path = "../datasets/dataset_f_puskesmas/classification_result/003_run/adaboost_norfecv/special_clean_rgb_lbp_glrlm_tamura_adaboost_norfecv"
     otomatis(csv_file, output_path)
 
 if __name__ == "__main__":

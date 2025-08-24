@@ -34,7 +34,7 @@ def split_data(csv_file_path, output_save, remove_ids=None):
         x_source, y_source, test_size=0.2, random_state=123)
 
     estimator = xgb.XGBClassifier()
-    visualizer = RFECV(estimator=estimator, step=1, cv=5, scoring='accuracy')
+    visualizer = RFECV(estimator=estimator, step=1, cv=5, scoring='recall')
     visualizer.fit(x_train, y_train)
     visualizer.show(outpath=os.path.join(output_save, "rfecv_visualization.png"))
     plt.close()
@@ -63,11 +63,11 @@ def get_best_model(cv, verbose, n_jobs, random_grid, x_train, y_train, output_sa
     xgb_model = xgb.XGBClassifier()
     xgb_grid_search = GridSearchCV(
         xgb_model, random_grid, cv=cv, verbose=verbose,
-        n_jobs=n_jobs, scoring='accuracy'
+        n_jobs=n_jobs, scoring='recall'
     )
     xgb_grid_search.fit(x_train, y_train)
     best_model = xgb_grid_search.best_estimator_
-    pickle.dump(best_model, open(os.path.join(output_save, 'xgb_best'), 'wb'))
+    pickle.dump(best_model, open(os.path.join(output_save, 'xgb_best.pkl'), 'wb'))
     return best_model
 
 def get_final_data(best_model, x_train, y_train, x_test, y_test, y_predict, output_save):
@@ -146,10 +146,10 @@ def otomatis(csv_file, output_path):
     get_final_data(best_model, x_train, y_train, x_test, y_test, y_predict, output_path)
 
 def main():
-    # csv_file = "../datasets/dataset_g/cropped_image_after_iva_reference_4/features/segmented/LAB_LBP_GLRLM_TAMURA.csv"
-    csv_file = "../datasets/dataset_f_puskesmas/features/LAB_LBP_GLRLM_TAMURA.csv"
-    # output_path = "../datasets/dataset_g/cropped_image_after_iva_reference_4/classification_result/segmented/lab_lbp_glrlm_tamura"
-    output_path = "../datasets/dataset_f_puskesmas/classification_result/001_run/xgboost_rfecv/clean_lab_lbp_glrlm_tamura"
+    # csv_file = "../datasets/dataset_g/cropped_image_after_iva_reference_1/features/segmented/LAB_LBP_GLRLM_TAMURA.csv"
+    csv_file = "../datasets/dataset_f_puskesmas/features/special.csv"
+    # output_path = "../datasets/dataset_g/cropped_image_after_iva_reference_1/classification_result/segmented/lab_lbp_glrlm_tamura_adaboost_norfecv"
+    output_path = "../datasets/dataset_f_puskesmas/classification_result/003_run/xgboost_rfecv/special_clean_lab_lbp_glrlm_tamura_adaboost_norfecv"
     otomatis(csv_file, output_path)
 
 if __name__ == "__main__":

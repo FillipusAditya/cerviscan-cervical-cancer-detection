@@ -7,7 +7,8 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from lightgbm import LGBMClassifier
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import *
 from sklearn.model_selection import train_test_split, GridSearchCV
 
@@ -42,24 +43,26 @@ def split_data(csv_file_path, output_save, remove_ids=None):
 
 def get_random_grid():
     return {
-        'n_estimators': [50, 100, 200, 300],
-        'learning_rate': [0.01, 0.05, 0.1, 0.2],
-        'max_depth': [-1, 3, 5, 7, 9],
-        'num_leaves': [15, 31, 63, 127],
-        'min_child_samples': [5, 10, 20, 30],
-        'subsample': [0.6, 0.8, 1.0],
-        'colsample_bytree': [0.6, 0.8, 1.0]
+        'n_estimators': [50, 100, 150, 200, 250, 300, 400, 500, 600],  # lebih luas
+        'learning_rate': np.arange(0.001, 2.1, 0.05),  # lebih rapat dan lebih kecil
+        'estimator': [
+            DecisionTreeClassifier(max_depth=d, min_samples_split=ms, min_samples_leaf=ml)
+            for d in range(1, 11)                 # depth lebih dalam
+            for ms in [2, 5, 10, 20]              # variasi min_samples_split
+            for ml in [1, 2, 4, 8]                # variasi min_samples_leaf
+        ]
     }
 
+
 def get_best_model(cv, verbose, n_jobs, random_grid, x_train, y_train, output_save):
-    lgbm_model = LGBMClassifier(boosting_type='gbdt', random_state=123)
-    lgbm_grid_search = GridSearchCV(
-        lgbm_model, random_grid, cv=cv, verbose=verbose,
+    ada_model = AdaBoostClassifier()
+    ada_grid_search = GridSearchCV(
+        ada_model, random_grid, cv=cv, verbose=verbose,
         n_jobs=n_jobs, scoring='accuracy'
     )
-    lgbm_grid_search.fit(x_train, y_train)
-    best_model = lgbm_grid_search.best_estimator_
-    pickle.dump(best_model, open(os.path.join(output_save, 'lightgbm_best.pkl'), 'wb'))
+    ada_grid_search.fit(x_train, y_train)
+    best_model = ada_grid_search.best_estimator_
+    pickle.dump(best_model, open(os.path.join(output_save, 'adaboost_best'), 'wb'))
     return best_model
 
 def get_final_data(best_model, x_train, y_train, x_test, y_test, y_predict, output_save):
@@ -107,7 +110,7 @@ def get_final_data(best_model, x_train, y_train, x_test, y_test, y_predict, outp
 
     for p in ax.patches:
         ax.annotate(f'{p.get_height():.2f}',
-                    (p.get_x() + p.get_width() / 2., p.get_height() ),
+                    (p.get_x() + p.get_width() / 2., p.get_height()),
                     ha='center', va='center',
                     xytext=(0, 9), textcoords='offset points')
 
@@ -139,9 +142,9 @@ def otomatis(csv_file, output_path):
 
 def main():
     # csv_file = "../datasets/dataset_g/cropped_image_after_iva_reference_1/features/segmented/LAB_LBP_GLRLM_TAMURA.csv"
-    csv_file = "../datasets/dataset_f_puskesmas/features/lab_LBP_GLRLM_TAMURA.csv"
-    # output_path = "../datasets/dataset_g/cropped_image_after_iva_reference_1/classification_result/segmented/lab_lbp_glrlm_tamura_lightgbm"
-    output_path = "../datasets/dataset_f_puskesmas/classification_result/001_run/lightgbm/clean_lab_lbp_glrlm_tamura_lightgbm"
+    csv_file = "../datasets/dataset_f/features/LAB_LBP_GLRLM_TAMURA.csv"
+    # output_path = "../datasets/dataset_g/cropped_image_after_iva_reference_1/classification_result/segmented/lab_lbp_glrlm_tamura_adaboost_norfecv"
+    output_path = "../datasets/dataset_f/classification_result/002_run/adaboost_norfecv/clean_lab_lbp_glrlm_tamura_adaboost_norfecv"
     otomatis(csv_file, output_path)
 
 if __name__ == "__main__":
