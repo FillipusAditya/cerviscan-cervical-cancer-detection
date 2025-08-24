@@ -15,8 +15,8 @@ def multiOtsuSegmentation():
         - Save segmented result into the output directory
     """
     # Path configuration
-    root_dir = '../datasets/dataset_puskesmas/cropped'  # Input RGB images
-    output_dir = '../datasets/dataset_puskesmas/segmented'  # Output segmented RGB images
+    root_dir = '../images'  # Input RGB images
+    output_dir = '../images/segmented'  # Output segmented RGB images
     os.makedirs(output_dir, exist_ok=True)
 
     sub_img_dirs = glob.glob(os.path.join(root_dir, '*'))
