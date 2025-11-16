@@ -1,3 +1,46 @@
+"""
+============================================
+📌 GLRLM (Gray Level Run Length Matrix) Feature Extraction (Python)
+============================================
+
+Description:
+------------
+This program extracts GLRLM (Gray Level Run Length Matrix) features from a given image. 
+GLRLM is a texture analysis method widely used in image processing and pattern 
+recognition tasks, particularly in medical imaging and computer vision. 
+
+It supports computing features in multiple directions (0°, 45°, 90°, 135°) and provides 
+commonly used statistical measures such as Short Run Emphasis, Long Run Emphasis, 
+Gray Level Non-Uniformity, Run Percentage, and more.
+
+Features:
+---------
+✅ Extracts 11 GLRLM texture features per direction
+✅ Supports 4 directional angles: 0°, 45°, 90°, 135°
+✅ Optional Local Binary Pattern (LBP) preprocessing
+✅ Returns both feature values and feature names with direction labels
+✅ Easily integrable with machine learning pipelines
+
+Usage:
+------
+1. Provide the path to the input image.
+2. Optionally enable Local Binary Pattern (LBP) preprocessing by setting `lbp='on'`.
+3. Call `get_glrlm_features(path)` to extract GLRLM features.
+4. Use `get_glrlm_feature_names()` to get the corresponding feature names.
+
+Example:
+--------
+from glrlm_feature_extraction import get_glrlm_features, get_glrlm_feature_names
+
+features = get_glrlm_features("sample_image.jpg", lbp='off')
+feature_names = get_glrlm_feature_names()
+
+print(dict(zip(feature_names, features)))
+
+Author: Fillipus Aditya Nugroho
+============================================
+"""
+
 import numpy as np
 import warnings
 from GrayRumatrix import getGrayRumatrix
@@ -9,20 +52,25 @@ def get_glrlm_features(path, lbp='off'):
     """
     Calculate GLRLM (Gray Level Run Length Matrix) features for a given image.
 
-    Parameters:
-        path (str): Path to the input image.
-        lbp (str, optional): If 'on', apply Local Binary Pattern (LBP) transformation before computing GLRLM.
-                             Defaults to 'off'.
+    Parameters
+    ----------
+    path : str
+        Path to the input image.
+    lbp : str, optional
+        If 'on', apply Local Binary Pattern (LBP) transformation before computing GLRLM.
+        Defaults to 'off'.
 
-    Returns:
-        list: List of extracted GLRLM feature values for each specified direction.
+    Returns
+    -------
+    list
+        List of extracted GLRLM feature values for each specified direction.
     """
 
     # Initialize GLRLM processing object
     test = getGrayRumatrix()
 
     # Read and preprocess image (optionally apply LBP)
-    test.read_img(path, lbp)
+    test.read_img(path)
 
     # Define directions for which GLRLM will be computed
     DEG = [['deg0'], ['deg45'], ['deg90'], ['deg135']]
@@ -85,13 +133,18 @@ def get_glrlm_names(features, degs):
     """
     Generate feature names for GLRLM, combining each feature name with directional labels.
 
-    Parameters:
-        features (list): List of base feature names (e.g., SRE, LRE, etc.).
-        degs (list of lists): List of directional angles to append to feature names
-                              (e.g., ['deg0'], ['deg45'], etc.).
+    Parameters
+    ----------
+    features : list
+        List of base feature names (e.g., SRE, LRE, etc.).
+    degs : list of lists
+        List of directional angles to append to feature names
+        (e.g., ['deg0'], ['deg45'], etc.).
 
-    Returns:
-        list: List of concatenated feature names with directional suffixes.
+    Returns
+    -------
+    list
+        List of concatenated feature names with directional suffixes.
     """
     glrlm_features_name = []
 
@@ -105,8 +158,10 @@ def get_glrlm_feature_names():
     """
     Get the complete list of all possible GLRLM feature names across all directions.
 
-    Returns:
-        list: Full list of GLRLM feature names with directional labels.
+    Returns
+    -------
+    list
+        Full list of GLRLM feature names with directional labels.
     """
     glrlm_features = [
         'SRE', 'LRE', 'GLN', 'RLN', 'RP',

@@ -1,3 +1,68 @@
+"""
+============================================
+📌 GLRLM (Gray Level Run Length Matrix) Computation Class (Python)
+============================================
+
+Description:
+------------
+This program implements a class `getGrayRumatrix` to compute the 
+Gray Level Run Length Matrix (GLRLM) and its statistical texture features. 
+GLRLM is a widely used method in texture analysis, medical imaging, 
+and computer vision tasks, providing insight into the spatial 
+distribution of gray levels in an image.
+
+The program allows users to:
+- Load and convert images to grayscale
+- Compute GLRLM for four directions (0°, 45°, 90°, 135°)
+- Extract 11 standard GLRLM-based statistical features
+
+Features:
+---------
+✅ Load images and convert them into grayscale format  
+✅ Compute GLRLM in 4 directional angles: 0°, 45°, 90°, 135°  
+✅ Implements 11 GLRLM statistical features:
+   - Short Run Emphasis (SRE)  
+   - Long Run Emphasis (LRE)  
+   - Gray Level Non-Uniformity (GLN)  
+   - Run Length Non-Uniformity (RLN)  
+   - Run Percentage (RP)  
+   - Low Gray Level Run Emphasis (LGLRE)  
+   - High Gray Level Run Emphasis (HGLRE)  
+   - Short Run Low Gray Level Emphasis (SRLGLE)  
+   - Short Run High Gray Level Emphasis (SRHGLE)  
+   - Long Run Low Gray Level Emphasis (LRLGLE)  
+   - Long Run High Gray Level Emphasis (LRHGLE)  
+✅ Handles numerical stability (avoids NaN/Inf values)  
+✅ Modular design for easy integration with ML/DL pipelines  
+
+Usage:
+------
+1. Initialize the class:
+       test = getGrayRumatrix()
+
+2. Load an image:
+       img_data = test.read_img("sample_image.jpg")
+
+3. Compute GLRLM:
+       rlmatrix = test.getGrayLevelRumatrix(img_data, ['deg0'])
+
+4. Extract features:
+       sre = test.getShortRunEmphasis(rlmatrix)
+
+Example:
+--------
+from GrayRumatrix import getGrayRumatrix
+
+test = getGrayRumatrix()
+img_data = test.read_img("sample_image.jpg")
+rlmatrix = test.getGrayLevelRumatrix(img_data, ['deg0'])
+sre = test.getShortRunEmphasis(rlmatrix)
+print("Short Run Emphasis:", sre)
+
+Author: Fillipus Aditya Nugroho
+============================================
+"""
+
 import matplotlib.pyplot as plt 
 from PIL import Image 
 import numpy as np
@@ -15,12 +80,18 @@ class getGrayRumatrix:
         """
         Loads an image from a specified path and converts it to grayscale.
 
-        Parameters:
-        - path (str): Path to the image file.
-        - lbp (str): Option to apply Local Binary Pattern (LBP) preprocessing (currently not implemented). Default is 'off'.
+        Parameters
+        ----------
+        path : str
+            Path to the image file.
+        lbp : str
+            Option to apply Local Binary Pattern (LBP) preprocessing 
+            (currently not implemented). Default is 'off'.
 
-        Returns:
-        - np.ndarray: Grayscale image data as a numpy array.
+        Returns
+        -------
+        np.ndarray
+            Grayscale image data as a numpy array.
         """
         try:
             img = Image.open(path)              # Open image using PIL
@@ -36,12 +107,17 @@ class getGrayRumatrix:
         """
         Computes the Gray-Level Run Length Matrix (GLRLM) for the image at given angles.
 
-        Parameters:
-        - array (np.ndarray): Grayscale image as a numpy array.
-        - theta (list of str): List of angles. Allowed: ['deg0', 'deg45', 'deg90', 'deg135'].
+        Parameters
+        ----------
+        array : np.ndarray
+            Grayscale image as a numpy array.
+        theta : list of str
+            List of angles. Allowed: ['deg0', 'deg45', 'deg90', 'deg135'].
 
-        Returns:
-        - np.ndarray: The computed GLRLM with dimensions (gray_levels, run_lengths, angles).
+        Returns
+        -------
+        np.ndarray
+            The computed GLRLM with dimensions (gray_levels, run_lengths, angles).
         """
         P = array
         x, y = P.shape
@@ -89,13 +165,19 @@ class getGrayRumatrix:
         """
         Applies an element-wise operation over each directional GLRLM matrix.
 
-        Parameters:
-        - function (callable): A function to apply (e.g., np.multiply, np.divide).
-        - x1 (np.ndarray): First input array.
-        - x2 (np.ndarray): Second input for the function.
+        Parameters
+        ----------
+        function : callable
+            A function to apply (e.g., np.multiply, np.divide).
+        x1 : np.ndarray
+            First input array.
+        x2 : np.ndarray
+            Second input for the function.
 
-        Returns:
-        - np.ndarray: The resulting array after applying the function for each angle.
+        Returns
+        -------
+        np.ndarray
+            The resulting array after applying the function for each angle.
         """
         rows, cols, nums = x1.shape
         result = np.ndarray((rows, cols, nums))
@@ -110,11 +192,15 @@ class getGrayRumatrix:
         """
         Calculates index matrices for gray levels (I) and run lengths (J).
 
-        Parameters:
-        - rlmatrix (np.ndarray): Input GLRLM.
+        Parameters
+        ----------
+        rlmatrix : np.ndarray
+            Input GLRLM.
 
-        Returns:
-        - tuple: Tuple (I, J+1) for use in feature calculations.
+        Returns
+        -------
+        tuple
+            Tuple (I, J+1) for use in feature calculations.
         """
         gray_level, run_length, _ = rlmatrix.shape
         I, J = np.ogrid[0:gray_level, 0:run_length]
@@ -124,15 +210,19 @@ class getGrayRumatrix:
         """
         Calculates the total sum of the GLRLM.
 
-        Parameters:
-        - rlmatrix (np.ndarray): Input GLRLM.
+        Parameters
+        ----------
+        rlmatrix : np.ndarray
+            Input GLRLM.
 
-        Returns:
-        - float: Sum of all elements.
+        Returns
+        -------
+        float
+            Sum of all elements.
         """
         return np.apply_over_axes(np.sum, rlmatrix, axes=(0, 1))[0, 0]
 
-    # Below are the standard GLRLM statistical features
+    # Below are the standard GLRLM statistical feature
 
     # 1. Short Run Emphasis (SRE)
     def getShortRunEmphasis(self, rlmatrix):

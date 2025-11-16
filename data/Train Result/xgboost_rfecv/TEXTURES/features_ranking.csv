@@ -1,0 +1,8 @@
+Feature,Importance
+std_lbp,0.4188
+SRLGLE_deg0,0.1662
+LRHGLE_deg0,0.1040
+directionality_tamura,0.0916
+SRHGLE_deg0,0.0902
+LGLRE_deg0,0.0840
+mean_lbp,0.0451

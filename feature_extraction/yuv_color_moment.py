@@ -1,3 +1,40 @@
+"""
+============================================
+📌 YUV Color Moment Feature Extraction (Python)
+============================================
+
+Description:
+------------
+This program extracts statistical color moment features (mean, standard deviation, 
+and skewness) from images in the YUV color space. The YUV representation separates 
+luminance (Y) from chrominance (U and V), which can improve performance in tasks 
+where brightness and color variations need to be analyzed independently.
+
+Features:
+---------
+✅ Converts RGB images into YUV color space using a standard transformation matrix  
+✅ Extracts first three color moments (mean, standard deviation, skewness)  
+✅ Works on all images that can be opened using Pillow (e.g., .png, .jpg, .jpeg)  
+✅ Provides both feature values and corresponding feature names  
+
+Usage:
+------
+1. Provide the path to the input image file.
+2. Call the `get_yuv_color_moment_features(image_path)` function to extract features.
+3. Use `get_yuv_color_moment_feature_names()` to retrieve the ordered feature labels.
+4. Features can be used for tasks such as image classification, retrieval, or clustering.
+
+Example:
+--------
+features = get_yuv_color_moment_features("sample.jpg")  
+feature_names = get_yuv_color_moment_feature_names()  
+
+print(dict(zip(feature_names, features)))
+
+Author: Fillipus Aditya Nugroho
+============================================
+"""
+
 import numpy as np
 from scipy.stats import skew
 from PIL import Image
@@ -6,16 +43,20 @@ def get_yuv_color_moment_features(image_path):
     """
     Extract color moment features from an image in the YUV color space.
 
-    This function converts an RGB image to the YUV color space using a standard conversion matrix.
-    It then computes the first three color moments: mean, standard deviation, and skewness
-    for each of the Y, U, and V channels.
+    This function converts an RGB image to the YUV color space using a standard 
+    conversion matrix. It then computes the first three color moments: mean, 
+    standard deviation, and skewness for each of the Y, U, and V channels.
 
-    Parameters:
-        image_path (str): Path to the image file.
+    Parameters
+    ----------
+    image_path : str
+        Path to the image file.
 
-    Returns:
-        list: A list containing mean, standard deviation, and skewness for Y, U, and V.
-               Order: [mean_y, mean_u, mean_v, std_y, std_u, std_v, skew_y, skew_u, skew_v]
+    Returns
+    -------
+    list
+        A list containing mean, standard deviation, and skewness for Y, U, and V.
+        Order: [mean_y, mean_u, mean_v, std_y, std_u, std_v, skew_y, skew_u, skew_v]
     """
     # Read the input image using Pillow
     image = Image.open(image_path)
@@ -64,8 +105,10 @@ def get_yuv_color_moment_feature_names():
     """
     Get the list of feature names for the YUV color moment extraction.
 
-    Returns:
-        list: Names for mean, standard deviation, and skewness for each YUV channel.
+    Returns
+    -------
+    list
+        Names for mean, standard deviation, and skewness for each YUV channel.
     """
     return [
         'mean_y', 'mean_u', 'mean_v',

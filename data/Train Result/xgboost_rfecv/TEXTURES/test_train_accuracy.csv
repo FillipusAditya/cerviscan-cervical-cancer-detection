@@ -1,0 +1,8 @@
+Dataset,Accuracy
+Train Accuracy,100.00%
+Test Accuracy,72.73%
+Accuracy,72.73%
+Precision,75.00%
+Specificity,75.00%
+Recall,70.59%
+F1 Score,72.73%

@@ -1,3 +1,45 @@
+"""
+============================================
+📌 Batch Image Feature Extraction (Python)
+============================================
+
+Description:
+------------
+This program performs batch feature extraction from images in a dataset.  
+It supports both **color moment features** (RGB, YUV, LAB) and **texture features** 
+(GLRLM, TAMURA, LBP, GLCM). The extracted features are saved into CSV files, 
+allowing further use in machine learning and pattern recognition tasks.
+
+The dataset is expected to be organized into subfolders, where each subfolder 
+represents a class label (e.g., "normal", "abnormal").
+
+Features:
+---------
+✅ Extracts **color moment features** (RGB, YUV, LAB)  
+✅ Extracts **texture features** (GLRLM, TAMURA, LBP, GLCM)  
+✅ Flexible selection of which feature types to extract  
+✅ Batch processing with **tqdm progress tracking**  
+✅ Saves results into labeled CSV files for easy use in ML workflows  
+✅ Automatically merges multiple feature types into one CSV per color space  
+
+Usage:
+------
+1. Organize dataset with subfolders per class (e.g., "dataset/normal", "dataset/abnormal").
+2. Set `root_dir` (dataset folder) and `output_dir` (save location for CSVs).
+3. Choose which feature types to extract (default: all color spaces + LBP, GLRLM, TAMURA).
+4. Run the script to generate feature CSVs.
+
+Example:
+--------
+python extract_features.py
+
+This will extract the specified features from all images inside `root_dir` 
+and save them into CSV files in `output_dir`.
+
+Author: Fillipus Aditya Nugroho
+============================================
+"""
+
 import sys
 import os
 import glob
@@ -24,19 +66,36 @@ class ExtractFeatures:
     A class to batch extract multiple color moment and texture features
     from a structured image dataset.
 
-    Attributes:
-        root_dir (str): Root directory containing subfolders for each label.
-        output_dir (str): Directory to save the extracted feature CSV files.
-        color_moment_features (dict): Mapping of color space names to extractor functions.
-        texture_features (dict): Mapping of texture feature names to extractor functions.
-        cm_features_df (dict): Stores DataFrames for each color moment type.
-        texture_features_df (dict): Stores DataFrames for each texture type.
+    Attributes
+    ----------
+    root_dir : str
+        Root directory containing subfolders for each class label.
+    output_dir : str
+        Directory where the extracted feature CSV files will be saved.
+    color_moment_features : dict
+        Mapping of color space names to feature extraction functions.
+    texture_features : dict
+        Mapping of texture feature names to feature extraction functions.
+    cm_features_df : dict
+        Stores pandas DataFrames for each color moment type.
+    texture_features_df : dict
+        Stores pandas DataFrames for each texture feature type.
     """
 
     def __init__(self, root_dir, output_dir):
         """
-        Initialize ExtractFeatures with input and output directories.
-        Prepares the feature mapping for color moments and texture features.
+        Initialize ExtractFeatures with dataset input and output directories.
+
+        Parameters
+        ----------
+        root_dir : str
+            Path to the dataset folder containing labeled subfolders.
+        output_dir : str
+            Path where extracted feature CSVs will be saved.
+
+        Returns
+        -------
+        None
         """
         self.root_dir = root_dir
         self.output_dir = output_dir
@@ -64,11 +123,19 @@ class ExtractFeatures:
         """
         Extract specified color moment and texture features for all images.
 
-        Parameters:
-            color_spaces (list or None): Color spaces to extract ['RGB', 'YUV', 'LAB'].
-                                         If None, all are used.
-            texture_features (list or None): Texture features to extract ['LBP', 'GLRLM', 'TAMURA', 'GLCM'].
-                                             If None, defaults to ['LBP', 'GLRLM', 'TAMURA'].
+        Parameters
+        ----------
+        color_spaces : list of str, optional
+            List of color spaces to extract features from. 
+            Options: ['RGB', 'YUV', 'LAB']. Default = all.
+        texture_features : list of str, optional
+            List of texture feature types to extract. 
+            Options: ['LBP', 'GLRLM', 'TAMURA', 'GLCM']. 
+            Default = ['LBP', 'GLRLM', 'TAMURA'].
+
+        Returns
+        -------
+        None
         """
         # Use defaults if not specified
         if color_spaces is None:
@@ -140,9 +207,8 @@ class ExtractFeatures:
 
 
 if __name__ == "__main__":
-    # Example usage for batch feature extraction
-    root_dir = '../datasets/dataset_puskesmas/segmented'
-    output_dir = '../datasets/dataset_puskesmas/features'
+    root_dir = ""
+    output_dir = ""
 
     extractor = ExtractFeatures(root_dir, output_dir)
     extractor.extract_features()

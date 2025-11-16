@@ -1,0 +1,6 @@
+Feature,Importance
+std_lbp,0.2659
+contrast_tamura,0.2354
+mean_a,0.1901
+skew_b,0.1764
+std_l,0.1322
